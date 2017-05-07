@@ -12,8 +12,6 @@
 
     };
 
-    w.agds
-
     w.agds.createMainNode = (objects) => {
 
         let main_node = {},
