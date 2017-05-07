@@ -23,7 +23,7 @@
             main_node[property] = {
                 max: oMinMax.max,
                 min: oMinMax.min,
-                nodes: w.agds.propertyValuesObjs(objects, property)
+                values: w.agds.propertyValuesObjs(objects, property)
             }
         });
 
@@ -34,7 +34,7 @@
     w.agds.fillPropertiesWithObjects = (graph_object, objects) => {
         let key;
         for (property in graph_object) {
-            graph_object[property].nodes.map((node) => {
+            graph_object[property].values.map((node) => {
                 key = Object.keys(node)[0];
                 node[key] = objects.map((object, index) => {
                     return {

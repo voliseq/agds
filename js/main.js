@@ -6,7 +6,7 @@
     iris = agds.commaToDot(iris);
     graph.param = agds.createMainNode(iris);
     agds.fillPropertiesWithObjects(graph.param, iris);
-    console.log(graph.param);
+    console.log(JSON.stringify(graph, null ,3));
 
 
 
