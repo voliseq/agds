@@ -12,6 +12,8 @@
 
     };
 
+    w.agds
+
     w.agds.createMainNode = (objects) => {
 
         let main_node = {},
@@ -26,20 +28,20 @@
     };
 
     w.agds.fillPropertiesWithObjects = (graph_object, objects) => {
-        let properties = Object.keys(graph_object),
-            key;
-
-        for(property in graph_object){
-            graph_object[property].map(node => {
+        let key;
+        for (property in graph_object) {
+            graph_object[property].map((node) => {
                 key = Object.keys(node)[0];
-                node[key] = objects.filter(object => {
+                node[key] = objects.map((object, index) => {
+                    return {
+                        [property]: object[property],
+                        index: index
+                    }
+                }).filter(object => {
                     return object[property] == key;
-                })
+                }).map(object => object.index)
             })
         }
-
-        console.log(graph_object);
-
     };
 
     w.agds.getObjectsWithPropertyValue = ((objects, property, value) => {
@@ -66,8 +68,6 @@
         return propArr;
 
     };
-
-
 
 
 })(window);
