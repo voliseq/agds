@@ -15,10 +15,16 @@
     w.agds.createMainNode = (objects) => {
 
         let main_node = {},
+            oMinMax = {},
             properties = Object.keys(objects[0]);
 
         properties.map((property) => {
-            main_node[property] = w.agds.propertyValues(objects, property);
+            oMinMax = w.agds.propertyValuesMinMax(objects, property);
+            main_node[property] = {
+                max: oMinMax.max,
+                min: oMinMax.min,
+                nodes: w.agds.propertyValuesObjs(objects, property)
+            }
         });
 
         return main_node;
@@ -28,7 +34,7 @@
     w.agds.fillPropertiesWithObjects = (graph_object, objects) => {
         let key;
         for (property in graph_object) {
-            graph_object[property].map((node) => {
+            graph_object[property].nodes.map((node) => {
                 key = Object.keys(node)[0];
                 node[key] = objects.map((object, index) => {
                     return {
@@ -48,18 +54,54 @@
         })
     });
 
-    w.agds.propertyValues = (objects, property) => {
-        let propArr = objects.map((object) => {
+    w.agds.propertyValuesMinMax = (objects, property) => {
+        let min,
+            max,
+            propArr = objects.map((object) => {
+                return object[property];
+            }).sort();
+
+        min = Math.min(...propArr);
+        max = Math.max(...propArr);
+
+        return {
+            min: min,
+            max: max
+        }
+    };
+
+    w.agds.propertyValuesObjs = (objects, property) => {
+        let key,
+            range,
+            oMinMax = agds.propertyValuesMinMax(objects, property),
+            propArr = objects.map((object) => {
             return object[property];
         }).sort();
 
         propArr = [... new Set(propArr)].sort();
 
-        propArr = propArr.map((object) => {
-            let key = object;
+        propArr = propArr.map((object, index) => {
+            key = object;
+            range = oMinMax.max - oMinMax.min;
 
-            return {
-                [key]: []
+            if(index == 0){
+                return {
+                    [key]: [],
+                    weight_next: 1 - (Math.abs(object - propArr[index+1])/range)
+                }
+            }
+            else if(index == propArr.length - 1){
+                return {
+                    [key]: [],
+                    weight_prev: 1 - (Math.abs(object - propArr[index-1])/range)
+                }
+            }
+            else{
+                return {
+                    [key]: [],
+                    weight_prev: 1 - (Math.abs(object - propArr[index-1])/range),
+                    weight_next: 1 - (Math.abs(object - propArr[index+1])/range)
+                }
             }
         });
 
