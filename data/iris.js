@@ -6,6 +6,7 @@ var iris = [
         "petal-width": "0,20",
         "class": "Iris-setosa"
     },
+
     {
         "leaf-length": "4,90",
         "leaf-width": "3,00",
@@ -13,6 +14,7 @@ var iris = [
         "petal-width": "0,20",
         "class": "Iris-setosa"
     },
+
     {
         "leaf-length": "4,70",
         "leaf-width": "3,20",
@@ -20,6 +22,7 @@ var iris = [
         "petal-width": "0,20",
         "class": "Iris-setosa"
     },
+
     {
         "leaf-length": "4,60",
         "leaf-width": "3,10",
@@ -174,6 +177,7 @@ var iris = [
         "petal-width": "0,20",
         "class": "Iris-setosa"
     },
+
     {
         "leaf-length": "5,00",
         "leaf-width": "3,00",
@@ -181,6 +185,7 @@ var iris = [
         "petal-width": "0,20",
         "class": "Iris-setosa"
     },
+
     {
         "leaf-length": "5,00",
         "leaf-width": "3,40",

@@ -75,8 +75,8 @@
             range,
             oMinMax = agds.propertyValuesMinMax(objects, property),
             propArr = objects.map((object) => {
-            return object[property];
-        }).sort();
+                return object[property];
+            }).sort();
 
         propArr = [... new Set(propArr)].sort();
 
@@ -84,23 +84,23 @@
             key = object;
             range = oMinMax.max - oMinMax.min;
 
-            if(index == 0){
+            if (index == 0) {
                 return {
                     [key]: [],
-                    weight_next: 1 - (Math.abs(object - propArr[index+1])/range)
+                    weight_next: 1 - (Math.abs(object - propArr[index + 1]) / range)
                 }
             }
-            else if(index == propArr.length - 1){
+            else if (index == propArr.length - 1) {
                 return {
                     [key]: [],
-                    weight_prev: 1 - (Math.abs(object - propArr[index-1])/range)
+                    weight_prev: 1 - (Math.abs(object - propArr[index - 1]) / range)
                 }
             }
-            else{
+            else {
                 return {
                     [key]: [],
-                    weight_prev: 1 - (Math.abs(object - propArr[index-1])/range),
-                    weight_next: 1 - (Math.abs(object - propArr[index+1])/range)
+                    weight_prev: 1 - (Math.abs(object - propArr[index - 1]) / range),
+                    weight_next: 1 - (Math.abs(object - propArr[index + 1]) / range)
                 }
             }
         });
@@ -112,8 +112,234 @@
 
     w.agds.findSimilar = (object, objects, graph) => {
 
+        let results = {},
+            indexes = [],
+            iter = 0;
+
+        objects.map((x,i) => {
+            results[i] = 0;
+        });
+
+        for (property in object) {
+            if (property != 'class') {
+                let firstConLeaLen = graph[property].values.filter((x, i) => {
+                    if (Object.keys(x)[0] == object[property]) {
+                        indexes[iter] = i;
+                        return true;
+                    }
+                })[0];
+
+                firstConLeaLen.weight = 1;
+
+                for (let i = indexes[iter]; i < graph[property].values.length - 1; i++) {
+                    let item = graph[property].values[i],
+                        next_item = graph[property].values[i + 1],
+                        key = Object.keys(next_item)[0],
+                        weight;
+
+                        weight = item.weight - (1 - item.weight_next);
+
+                    next_item.weight = weight;
+
+                    for (let objI of next_item[key]) {
+                        results[objI] += next_item.weight / 4.0;
+                    }
+
+
+                }
+
+                for (let i = indexes[iter]; i > 0; i--) {
+                    let item = graph[property].values[i],
+                        prev_item = graph[property].values[i - 1],
+                        key = Object.keys(prev_item)[0];
+
+                    prev_item.weight = item.weight - (1 - item.weight_prev);
+
+                    for (let objI of prev_item[key]) {
+                        results[objI] += prev_item.weight / 4.0;
+                    }
+
+                }
+            }
+            iter++;
+        }
+        let resultsSort = Object.keys(results).sort((a,b) => results[b] - results[a])
+            .map(x => {
+                return {
+                    i: x,
+                    val : results[x]
+                }
+            });
+
+        return resultsSort;
 
     };
 
+    //
+    // w.agds.findSimilar = (object, objects, graph) => {
+    //
+    //
+    //     let results = {},
+    //         indexes = [],
+    //         firstConLeaLen = graph["leaf-length"].values.filter((x, i) => {
+    //             if (Object.keys(x)[0] == object["leaf-length"]) {
+    //                 indexes[0] = i;
+    //                 return true;
+    //             }
+    //         })[0];
+    //
+    //     objects.map((x, i) => {
+    //         results[i] = 0;
+    //     });
+    //
+    //     firstConLeaLen.weight = 1;
+    //
+    //     for (let i = indexes[0]; i < graph["leaf-length"].values.length - 1; i++) {
+    //         let item = graph["leaf-length"].values[i],
+    //             next_item = graph["leaf-length"].values[i + 1],
+    //             key = Object.keys(next_item)[0];
+    //
+    //         next_item.weight = item.weight - (1 - item.weight_next);
+    //
+    //         for (let objI of next_item[key]) {
+    //             results[objI] += next_item.weight / 4.0;
+    //         }
+    //
+    //
+    //     }
+    //
+    //     for (let i = indexes[0]; i > 0; i--) {
+    //         let item = graph["leaf-length"].values[i],
+    //             prev_item = graph["leaf-length"].values[i - 1],
+    //             key = Object.keys(prev_item)[0];
+    //
+    //         prev_item.weight = item.weight - (1 - item.weight_prev);
+    //
+    //         for (let objI of prev_item[key]) {
+    //             results[objI] += prev_item.weight / 4.0;
+    //         }
+    //
+    //     }
+    //
+    //
+    //     firstConLeaLen = graph["leaf-width"].values.filter((x, i) => {
+    //         if (Object.keys(x)[0] == object["leaf-width"]) {
+    //             indexes[1] = i;
+    //             return true;
+    //         }
+    //     })[0];
+    //
+    //     firstConLeaLen.weight = 1;
+    //
+    //     for (let i = indexes[1]; i < graph["leaf-width"].values.length - 1; i++) {
+    //         let item = graph["leaf-width"].values[i],
+    //             next_item = graph["leaf-width"].values[i + 1],
+    //             key = Object.keys(next_item)[0];
+    //
+    //         next_item.weight = item.weight - (1 - item.weight_next);
+    //
+    //         for (let objI of next_item[key]) {
+    //             results[objI] += next_item.weight / 4.0;
+    //         }
+    //
+    //
+    //     }
+    //
+    //     for (let i = indexes[1]; i > 0; i--) {
+    //         let item = graph["leaf-width"].values[i],
+    //             prev_item = graph["leaf-width"].values[i - 1],
+    //             key = Object.keys(prev_item)[0];
+    //
+    //         prev_item.weight = item.weight - (1 - item.weight_prev);
+    //
+    //         for (let objI of prev_item[key]) {
+    //             results[objI] += prev_item.weight / 4.0;
+    //         }
+    //
+    //     }
+    //
+    //
+    //     firstConLeaLen = graph["petal-width"].values.filter((x, i) => {
+    //         if (Object.keys(x)[0] == object["petal-width"]) {
+    //             indexes[2] = i;
+    //             return true;
+    //         }
+    //     })[0];
+    //
+    //     firstConLeaLen.weight = 1;
+    //
+    //     for (let i = indexes[2]; i < graph["petal-width"].values.length - 1; i++) {
+    //         let item = graph["petal-width"].values[i],
+    //             next_item = graph["petal-width"].values[i + 1],
+    //             key = Object.keys(next_item)[0];
+    //
+    //         next_item.weight = item.weight - (1 - item.weight_next);
+    //
+    //         for (let objI of next_item[key]) {
+    //             results[objI] += next_item.weight / 4.0;
+    //         }
+    //
+    //
+    //     }
+    //
+    //     for (let i = indexes[2]; i > 0; i--) {
+    //         let item = graph["petal-width"].values[i],
+    //             prev_item = graph["petal-width"].values[i - 1],
+    //             key = Object.keys(prev_item)[0];
+    //
+    //         prev_item.weight = item.weight - (1 - item.weight_prev);
+    //
+    //         for (let objI of prev_item[key]) {
+    //             results[objI] += prev_item.weight / 4.0;
+    //         }
+    //
+    //     }
+    //
+    //     firstConLeaLen = graph["petal-length"].values.filter((x, i) => {
+    //         if (Object.keys(x)[0] == object["petal-length"]) {
+    //             indexes[3] = i;
+    //             return true;
+    //         }
+    //     })[0];
+    //
+    //     firstConLeaLen.weight = 1;
+    //
+    //     for (let i = indexes[3]; i < graph["petal-length"].values.length - 1; i++) {
+    //         let item = graph["petal-length"].values[i],
+    //             next_item = graph["petal-length"].values[i + 1],
+    //             key = Object.keys(next_item)[0];
+    //
+    //         next_item.weight = item.weight - (1 - item.weight_next);
+    //
+    //         for (let objI of next_item[key]) {
+    //             results[objI] += next_item.weight / 4.0;
+    //         }
+    //
+    //
+    //     }
+    //
+    //     for (let i = indexes[3]; i > 0; i--) {
+    //         let item = graph["petal-length"].values[i],
+    //             prev_item = graph["petal-length"].values[i - 1],
+    //             key = Object.keys(prev_item)[0];
+    //
+    //         prev_item.weight = item.weight - (1 - item.weight_prev);
+    //
+    //         for (let objI of prev_item[key]) {
+    //             results[objI] += prev_item.weight / 4.0;
+    //         }
+    //
+    //     }
+    //
+    //     let resultsSort = Object.keys(results).sort((a, b) => results[b] - results[a])
+    //         .map(x => {
+    //             return {
+    //                 i: x,
+    //                 val: results[x]
+    //             }
+    //         });
+    //
+    //     return resultsSort;
+    // };
 
 })(window);
