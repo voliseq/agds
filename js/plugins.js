@@ -109,12 +109,30 @@
 
     };
 
+    w.agds.findPropertyInRange = (property, min, max, objects, graph) => {
+
+        let results = [],
+            objsInRange = graph[property].values.filter((x, i) => {
+
+            let firstKey = Object.keys(x)[0];
+
+            if(firstKey <= max && firstKey >= min){
+                x[firstKey].forEach((id, index) => {
+                    results.push(objects[id]);
+                })
+            }
+        });
+
+        console.log(results);
+
+    };
 
     w.agds.findSimilar = (object, objects, graph) => {
 
         let results = {},
             indexes = [],
-            iter = 0;
+            iter = 0,
+            obj_length = Object.keys(object).length - 1;
 
         objects.map((x,i) => {
             results[i] = 0;
@@ -142,7 +160,7 @@
                     next_item.weight = weight;
 
                     for (let objI of next_item[key]) {
-                        results[objI] += next_item.weight / 4.0;
+                        results[objI] += next_item.weight / obj_length;
                     }
 
 
@@ -156,7 +174,7 @@
                     prev_item.weight = item.weight - (1 - item.weight_prev);
 
                     for (let objI of prev_item[key]) {
-                        results[objI] += prev_item.weight / 4.0;
+                        results[objI] += prev_item.weight / obj_length;
                     }
 
                 }
