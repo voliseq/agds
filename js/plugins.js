@@ -109,6 +109,24 @@
 
     };
 
+
+    w.agds.findClass = (cls, objects, graph) => {
+        let results = [],
+            classObjsIds = graph["class"].values.filter(x => {
+                let firstKey = Object.keys(x)[0];
+                return firstKey == cls;
+            });
+
+        let firstKey = Object.keys(classObjsIds[0])[0];
+        classObjsIds[0][firstKey].forEach((x) => {
+            results.push(objects[x]);
+        })
+
+        return results;
+
+    };
+
+
     w.agds.findPropertiesInRange = (propertiesObj, objects, graph) => {
         let results,
             iterations_results = [];

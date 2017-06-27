@@ -23,5 +23,9 @@
     console.log(propertyInRange);
     let propertiesInRange = agds.findPropertiesInRange([{name: "leaf-width", min: 3.0, max: 3.2}, {name: "petal-length", min: 1.4, max: 1.5}], iris, graph.param);
     console.log(propertiesInRange);
+    let classObjs = agds.findClass("Iris-setosa",iris, graph.param);
+    console.log(classObjs);
+
+
 
 })(window);
