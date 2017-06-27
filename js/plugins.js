@@ -109,21 +109,51 @@
 
     };
 
+    w.agds.findPropertiesInRange = (propertiesObj, objects, graph) => {
+        let results,
+            iterations_results = [];
+
+        propertiesObj.forEach((property, index) => {
+
+
+            iterations_results[index] = [];
+
+            graph[property.name].values.filter((x, i) => {
+                let firstKey = Object.keys(x)[0];
+                if (firstKey <= property.max && firstKey >= property.min) {
+                    x[firstKey].forEach((id) => {
+                        iterations_results[index].push(objects[id]);
+                    })
+                }
+            });
+
+        });
+
+        results = iterations_results.shift().filter(function (v) {
+            return iterations_results.every(function (a) {
+                return a.indexOf(v) !== -1;
+            });
+        });
+
+        return results;
+
+
+    };
+
     w.agds.findPropertyInRange = (property, min, max, objects, graph) => {
 
-        let results = [],
-            objsInRange = graph[property].values.filter((x, i) => {
-
+        let results = [];
+        graph[property].values.filter((x, i) => {
             let firstKey = Object.keys(x)[0];
 
-            if(firstKey <= max && firstKey >= min){
+            if (firstKey <= max && firstKey >= min) {
                 x[firstKey].forEach((id, index) => {
                     results.push(objects[id]);
                 })
             }
         });
 
-        console.log(results);
+        return results;
 
     };
 
@@ -134,7 +164,7 @@
             iter = 0,
             obj_length = Object.keys(object).length - 1;
 
-        objects.map((x,i) => {
+        objects.map((x, i) => {
             results[i] = 0;
         });
 
@@ -155,7 +185,7 @@
                         key = Object.keys(next_item)[0],
                         weight;
 
-                        weight = item.weight - (1 - item.weight_next);
+                    weight = item.weight - (1 - item.weight_next);
 
                     next_item.weight = weight;
 
@@ -181,11 +211,11 @@
             }
             iter++;
         }
-        let resultsSort = Object.keys(results).sort((a,b) => results[b] - results[a])
+        let resultsSort = Object.keys(results).sort((a, b) => results[b] - results[a])
             .map(x => {
                 return {
                     i: x,
-                    val : results[x]
+                    val: results[x]
                 }
             });
 

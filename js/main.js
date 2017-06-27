@@ -19,7 +19,9 @@
     })
 
 
-    let inRange = agds.findPropertyInRange("leaf-length", 4.8, 4.8, iris, graph.param);
-
+    let propertyInRange = agds.findPropertyInRange("leaf-length", 4.8, 4.8, iris, graph.param);
+    console.log(propertyInRange);
+    let propertiesInRange = agds.findPropertiesInRange([{name: "leaf-width", min: 3.0, max: 3.2}, {name: "petal-length", min: 1.4, max: 1.5}], iris, graph.param);
+    console.log(propertiesInRange);
 
 })(window);
