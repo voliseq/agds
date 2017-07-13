@@ -120,7 +120,7 @@
         let firstKey = Object.keys(classObjsIds[0])[0];
         classObjsIds[0][firstKey].forEach((x) => {
             results.push(objects[x]);
-        })
+        });
 
         return results;
 
@@ -161,11 +161,11 @@
     w.agds.findPropertyInRange = (property, min, max, objects, graph) => {
 
         let results = [];
-        graph[property].values.filter((x, i) => {
+        graph[property].values.filter((x) => {
             let firstKey = Object.keys(x)[0];
 
             if (firstKey <= max && firstKey >= min) {
-                x[firstKey].forEach((id, index) => {
+                x[firstKey].forEach((id) => {
                     results.push(objects[id]);
                 })
             }
